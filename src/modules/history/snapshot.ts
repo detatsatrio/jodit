@@ -13,6 +13,8 @@ import { ViewComponent } from 'jodit/core/component';
 import { IS_PROD } from 'jodit/core/constants';
 import { Dom } from 'jodit/core/dom/dom';
 
+import DOMPurify from 'dompurify';
+
 /**
  * Module for creating snapshot of editor which includes html content and the current selection
  */
@@ -160,16 +162,23 @@ export class Snapshot extends ViewComponent<IJodit> implements ISnapshot {
 			}
 		};
 
-		snapshot.html = this.__getCleanedEditorValue(this.j.editor);
+		snapshot.html = DOMPurify.sanitize(
+			this.__getCleanedEditorValue(this.j.editor)
+		);
 
 		const sel = this.j.s.sel;
 
 		if (sel && sel.rangeCount) {
 			const range = sel.getRangeAt(0);
+			// Sanitize the range's start and end containers
 			const startContainer = this.calcHierarchyLadder(
-				range.startContainer
+				// @ts-ignore
+				DOMPurify.sanitize(range.startContainer as unknown as string)
 			);
-			const endContainer = this.calcHierarchyLadder(range.endContainer);
+			const endContainer = this.calcHierarchyLadder(
+				// @ts-ignore
+				DOMPurify.sanitize(range.endContainer as unknown as string)
+			);
 
 			let startOffset = Snapshot.strokeOffset(
 					range.startContainer,
