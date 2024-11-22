@@ -81,6 +81,8 @@ import {
 	ViewWithToolbar
 } from 'jodit/modules';
 
+import DOMPurify from 'isomorphic-dompurify';
+
 const __defaultStyleDisplayKey = 'data-jodit-default-style-display';
 const __defaultClassesKey = 'data-jodit-default-classes';
 
@@ -174,7 +176,45 @@ export class Jodit extends ViewWithToolbar implements IJodit, Dlgs {
 	 * Factory for creating Jodit instance
 	 */
 	static make(element: HTMLElement | string, options?: object): Jodit {
-		return new this(element, options);
+		let sanitizedElement;
+
+		interface SanitizedOptions {
+			theme?: string;
+			readonly?: string;
+			placeholder?: string;
+		}
+
+		// Sanitize the element
+		if (typeof element === 'string') {
+			// Sanitize the selector string to prevent harmful input
+			sanitizedElement = document.querySelector(
+				DOMPurify.sanitize(element)
+			);
+			if (!sanitizedElement) {
+				throw new Error(`Invalid or nonexistent element: ${element}`);
+			}
+		} else if (element instanceof HTMLElement) {
+			sanitizedElement = element;
+		} else {
+			throw new Error(
+				'Invalid element type. Must be a string or HTMLElement.'
+			);
+		}
+
+		// Sanitize options
+		const sanitizedOptions = {} as { [key: string]: string };
+		const allowedOptions = ['theme', 'readonly', 'placeholder']; // Add other allowed options
+		for (const key in options) {
+			if (allowedOptions.includes(key)) {
+				sanitizedOptions[key as keyof SanitizedOptions] =
+					// @ts-ignore
+					DOMPurify.sanitize(options[key]);
+			}
+		}
+
+		// Return a new Jodit instance
+		// @ts-ignore
+		return new this(sanitizedElement, sanitizedOptions);
 	}
 
 	/**
