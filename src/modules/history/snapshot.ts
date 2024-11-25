@@ -13,7 +13,7 @@ import { ViewComponent } from 'jodit/core/component';
 import { IS_PROD } from 'jodit/core/constants';
 import { Dom } from 'jodit/core/dom/dom';
 
-import DOMPurify from 'dompurify';
+import DOMPurify from '../../../node_modules/dompurify';
 
 /**
  * Module for creating snapshot of editor which includes html content and the current selection

@@ -81,7 +81,7 @@ import {
 	ViewWithToolbar
 } from 'jodit/modules';
 
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from '../node_modules/isomorphic-dompurify';
 
 const __defaultStyleDisplayKey = 'data-jodit-default-style-display';
 const __defaultClassesKey = 'data-jodit-default-classes';

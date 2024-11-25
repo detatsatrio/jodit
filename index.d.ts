@@ -14,8 +14,8 @@ declare global {
 	}
 
 	interface CaretPosition {
-		offsetNode: Node;
-		offset: number;
+		readonly offsetNode: Node;
+		readonly offset: number;
 	}
 
 	interface IdleDeadline {
@@ -29,6 +29,7 @@ declare global {
 	}
 
 	interface Document {
+		// @ts-ignore
 		caretPositionFromPoint?(x: number, y: number): CaretPosition;
 	}
 
